@@ -21,13 +21,15 @@ interface SurveyCreatorWidgetProps {
 export default function SurveyCreatorWidget(props: SurveyCreatorWidgetProps) {
   const [creator, setCreator] = useState<SurveyCreator>();
 
+  const apiBaseUrl = `${process.env.NEXT_PUBLIC_API_URL}/api`;
+
   useEffect(() => {
     if (!creator) {
       const newCreator = new SurveyCreator(props.options || defaultCreatorOptions);
 
       newCreator.saveSurveyFunc = async (no: number, callback: (num: number, status: boolean) => void) => {
         try {
-          const response = await fetch("http://localhost:5000/api/changeJson", {
+          const response = await fetch(`${apiBaseUrl}/api/changeJson`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -49,7 +51,7 @@ export default function SurveyCreatorWidget(props: SurveyCreatorWidgetProps) {
 
       setCreator(newCreator);
     }
-  }, [creator, props.id, props.options]);
+  }, [creator, props.id, props.options, apiBaseUrl]);
 
   useEffect(() => {
     if (creator && props.json) {

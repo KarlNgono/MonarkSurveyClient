@@ -6,10 +6,11 @@ import { useRouter } from "next/navigation";
 
 export default function Header() {
     const router = useRouter();
+    const apiBaseUrl = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
     const handleLogout = async () => {
         try {
-            const res = await fetch("http://localhost:5000/api/logout", {
+            const res = await fetch(`${apiBaseUrl}/logout`, {
                 method: "POST",
                 credentials: "include",
             });
@@ -24,7 +25,6 @@ export default function Header() {
     return (
         <header className="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50">
             <div className="max-w-screen-xl mx-auto flex items-center justify-between p-4">
-
                 <button
                     type="button"
                     className="flex items-center gap-2 focus:outline-none"

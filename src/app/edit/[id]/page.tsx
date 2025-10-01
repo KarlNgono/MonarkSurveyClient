@@ -7,10 +7,11 @@ import SurveyCreatorWidget from "@/components/SurveyCreator";
 export default function SurveyEditorPage() {
     const params = useParams();
     const id = params?.id as string;
-
     const [surveyJson, setSurveyJson] = useState<any>(null);
     const [name, setName] = useState<string>("");
     const [loading, setLoading] = useState(true);
+
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
 
     useEffect(() => {
         if (!id || id === "new") {
@@ -20,7 +21,7 @@ export default function SurveyEditorPage() {
 
         const fetchSurvey = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/getSurvey?surveyId=${id}`);
+                const res = await fetch(`${apiBaseUrl}/api/getSurvey?surveyId=${id}`);
                 if (!res.ok) throw new Error("Failed to load the survey");
                 const data = await res.json();
                 setSurveyJson(data.json);
@@ -33,7 +34,7 @@ export default function SurveyEditorPage() {
         };
 
         fetchSurvey();
-    }, [id]);
+    }, [id, apiBaseUrl]);
 
     if (loading) return null;
 
@@ -52,7 +53,7 @@ export default function SurveyEditorPage() {
             </div>
 
             <div className="flex-1 min-h-0">
-                <SurveyCreatorWidget id={id !== "new" ? id : undefined} json={surveyJson}/>
+                <SurveyCreatorWidget id={id !== "new" ? id : undefined} json={surveyJson} />
             </div>
         </div>
     );

@@ -20,12 +20,13 @@ export default function SurveyList() {
     const [editingName, setEditingName] = useState("");
 
     const itemsPerPage = 4;
+    const apiBaseUrl = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
     useEffect(() => { fetchSurveys(); }, []);
 
     async function fetchSurveys() {
         try {
-            const res = await fetch("http://localhost:5000/api/getActive");
+            const res = await fetch(`${apiBaseUrl}/getActive`);
             if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
             const data = await res.json();
             setSurveys(data);
@@ -39,32 +40,40 @@ export default function SurveyList() {
     async function createSurvey() {
         if (!newSurveyName.trim()) return alert("Survey name is required");
         try {
-            const res = await fetch(`http://localhost:5000/api/create?name=${encodeURIComponent(newSurveyName)}`);
+            const res = await fetch(`${apiBaseUrl}/create?name=${encodeURIComponent(newSurveyName)}`);
             if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
             const newSurvey = await res.json();
             setSurveys(prev => [...prev, newSurvey]);
             setModalOpen(false);
             setNewSurveyName("");
-            alert("Survey created ✅");
-        } catch (err: any) { setError(err.message); }
+            alert("Survey created");
+        } catch (err: any) {
+            setError(err.message);
+        }
     }
 
     async function deleteSurvey(id: string) {
         if (!confirm("Are you sure you want to delete this survey?")) return;
         try {
-            const res = await fetch(`http://localhost:5000/api/delete?id=${id}`);
+            const res = await fetch(`${apiBaseUrl}/delete?id=${id}`);
             if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
             setSurveys(prev => prev.filter(s => s.id !== id));
-        } catch (err: any) { setError(err.message); }
+        } catch (err: any) {
+            setError(err.message);
+        }
     }
 
     async function saveName(id: string) {
         if (!editingName.trim()) return alert("Name cannot be empty");
         try {
-            await fetch(`http://localhost:5000/api/changeName?id=${id}&name=${encodeURIComponent(editingName)}`);
+            await fetch(`${apiBaseUrl}/changeName?id=${id}&name=${encodeURIComponent(editingName)}`);
             setSurveys(prev => prev.map(s => s.id === id ? { ...s, name: editingName } : s));
-        } catch (err) { alert("Error saving name"); console.error(err); }
-        finally { setEditingId(null); }
+        } catch (err) {
+            alert("Error saving name");
+            console.error(err);
+        } finally {
+            setEditingId(null);
+        }
     }
 
     const filteredSurveys = surveys.filter(s => s.name.toLowerCase().includes(search.toLowerCase()));

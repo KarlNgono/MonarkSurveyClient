@@ -14,6 +14,8 @@ export default function SignInPage() {
     const [error, setError] = useState("");
     const router = useRouter();
 
+    const apiBaseUrl = `${process.env.NEXT_PUBLIC_API_URL}/api`;
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
@@ -24,7 +26,7 @@ export default function SignInPage() {
         }
 
         try {
-            const res = await fetch("http://localhost:5000/api/login", {
+            const res = await fetch(`${apiBaseUrl}/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
@@ -64,7 +66,6 @@ export default function SignInPage() {
                     <p className="mt-4 text-lg max-w-md text-gray-700 leading-relaxed tracking-wide">
                         Welcome back! Enter your email and password to access your surveys quickly and securely.
                     </p>
-
                 </div>
             </div>
 

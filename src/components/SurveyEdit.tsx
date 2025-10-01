@@ -15,10 +15,12 @@ export default function SurveyEditor({ id }: { id: string }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    const apiBaseUrl = `${process.env.NEXT_PUBLIC_API_URL}/api`;
+
     useEffect(() => {
         async function fetchSurvey() {
             try {
-                const res = await fetch(`http://localhost:5000/api/getSurvey?surveyId=${id}`);
+                const res = await fetch(`${apiBaseUrl}/getSurvey?surveyId=${id}`);
                 if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
                 const data: SurveyItem = await res.json();
 
@@ -37,13 +39,13 @@ export default function SurveyEditor({ id }: { id: string }) {
         }
 
         if (id) fetchSurvey();
-    }, [id]);
+    }, [id, apiBaseUrl]);
 
     async function saveSurvey() {
         if (!creator) return;
 
         try {
-            const res = await fetch("http://localhost:5000/api/changeJson", {
+            const res = await fetch(`${apiBaseUrl}/changeJson`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

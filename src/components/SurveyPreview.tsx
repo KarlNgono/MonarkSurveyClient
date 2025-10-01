@@ -16,10 +16,12 @@ export default function SurveyPreview({ id }: { id: string }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    const apiBaseUrl = `${process.env.NEXT_PUBLIC_API_URL}/api`;
+
     useEffect(() => {
         async function fetchSurvey() {
             try {
-                const res = await fetch(`http://localhost:5000/api/getSurvey?surveyId=${id}`);
+                const res = await fetch(`${apiBaseUrl}/getSurvey?surveyId=${id}`);
                 if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
                 const data = await res.json();
                 setSurvey(data);
@@ -29,8 +31,9 @@ export default function SurveyPreview({ id }: { id: string }) {
                 setLoading(false);
             }
         }
+
         if (id) fetchSurvey();
-    }, [id]);
+    }, [id, apiBaseUrl]);
 
     if (loading) return null;
     if (error) return <p className="text-red-500">Error: {error}</p>;

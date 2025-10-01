@@ -15,12 +15,12 @@ export default function UsersTable() {
     const [editingUser, setEditingUser] = useState<User | null>(null);
     const [formData, setFormData] = useState({ name: "", email: "", password: "" });
 
-    useEffect(() => {
-        fetchUsers();
-    }, []);
+    const apiBaseUrl = `${process.env.NEXT_PUBLIC_API_URL}/api`;
+
+    useEffect(() => { fetchUsers(); }, []);
 
     async function fetchUsers() {
-        const res = await fetch("http://localhost:5000/api/getUsers");
+        const res = await fetch(`${apiBaseUrl}/getUsers`);
         const data = await res.json();
         setUsers(data);
     }
@@ -42,13 +42,13 @@ export default function UsersTable() {
             return alert("All fields are required");
 
         if (editingUser) {
-            await fetch(`http://localhost:5000/api/updateUser/${editingUser.id}`, {
+            await fetch(`${apiBaseUrl}/updateUser/${editingUser.id}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
         } else {
-            await fetch("http://localhost:5000/api/signup", {
+            await fetch(`${apiBaseUrl}/signup`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
@@ -61,13 +61,12 @@ export default function UsersTable() {
 
     async function deleteUser(id: number) {
         if (!confirm("Are you sure you want to delete this user?")) return;
-        await fetch(`http://localhost:5000/api/users/${id}`, { method: "DELETE" });
+        await fetch(`${apiBaseUrl}/users/${id}`, { method: "DELETE" });
         fetchUsers();
     }
 
     const filteredUsers = users.filter(
-        u =>
-            u.name.toLowerCase().includes(search.toLowerCase()) ||
+        u => u.name.toLowerCase().includes(search.toLowerCase()) ||
             u.email.toLowerCase().includes(search.toLowerCase())
     );
 
