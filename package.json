@@ -9,13 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.2.3",
     "ace-builds": "latest",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "jspdf-autotable": "^3.8.2",
     "lucide-react": "^0.544.0",
     "next": "14.1.0",
+    "next-themes": "^0.4.6",
     "react": "^18",
     "react-dom": "^18",
+    "sonner": "^2.0.7",
     "survey-analytics": "latest",
     "survey-core": "latest",
     "survey-creator-core": "latest",
@@ -23,7 +27,10 @@
     "survey-pdf": "latest",
     "survey-react-ui": "latest",
     "tailwind-merge": "^3.3.1",
-    "wordcloud": "^1.2.2"
+    "tailwind-variants": "^3.1.1",
+    "tailwindcss-animate": "^1.0.7",
+    "wordcloud": "^1.2.2",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -34,7 +41,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
     "postcss": "^8",
-    "tailwindcss": "^3.3.0",
+    "tailwindcss": "^3.4.18",
     "typescript": "^5"
   }
 }

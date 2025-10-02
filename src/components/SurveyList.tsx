@@ -22,7 +22,9 @@ export default function SurveyList() {
     const itemsPerPage = 4;
     const apiBaseUrl = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
-    useEffect(() => { fetchSurveys(); }, []);
+    useEffect(() => {
+        fetchSurveys();
+    }, []);
 
     async function fetchSurveys() {
         try {
@@ -67,7 +69,7 @@ export default function SurveyList() {
         if (!editingName.trim()) return alert("Name cannot be empty");
         try {
             await fetch(`${apiBaseUrl}/changeName?id=${id}&name=${encodeURIComponent(editingName)}`);
-            setSurveys(prev => prev.map(s => s.id === id ? { ...s, name: editingName } : s));
+            setSurveys(prev => prev.map(s => s.id === id ? {...s, name: editingName} : s));
         } catch (err) {
             alert("Error saving name");
             console.error(err);
@@ -128,7 +130,10 @@ export default function SurveyList() {
                                     />
                                 ) : (
                                     <span
-                                        onDoubleClick={() => { setEditingId(survey.id); setEditingName(survey.name); }}
+                                        onDoubleClick={() => {
+                                            setEditingId(survey.id);
+                                            setEditingName(survey.name);
+                                        }}
                                         className="cursor-pointer"
                                     >
                       {survey.name}
@@ -200,7 +205,10 @@ export default function SurveyList() {
                         <div className="flex justify-end gap-2">
                             <button
                                 className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
-                                onClick={() => { setModalOpen(false); setNewSurveyName(""); }}
+                                onClick={() => {
+                                    setModalOpen(false);
+                                    setNewSurveyName("");
+                                }}
                             >
                                 Cancel
                             </button>

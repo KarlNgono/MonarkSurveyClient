@@ -10,9 +10,7 @@ export default function LayoutWrapper({
 }) {
     const pathname = usePathname();
 
-    const hiddenRoutes = ["/"];
-    const hideHeader =
-        hiddenRoutes.includes(pathname) || pathname.startsWith("/preview/");
+    const hideHeader = pathname === "/";
 
     return (
         <>
