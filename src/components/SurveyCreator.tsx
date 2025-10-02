@@ -9,7 +9,6 @@ import "ace-builds/src-noconflict/ace";
 import "ace-builds/src-noconflict/ext-searchbox";
 import { surveyLocalization } from "survey-core";
 
-
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { toast } from "sonner";
@@ -29,9 +28,8 @@ const defaultCreatorOptions: CreatorOptions = {
     showTranslationTab: true,
     showPreviewTab: false
 };
-surveyLocalization.locales["Francais"] = {
 
-}
+surveyLocalization.locales["Francais"] = {};
 
 interface SurveyCreatorWidgetProps {
     json?: any;
@@ -42,6 +40,7 @@ interface SurveyCreatorWidgetProps {
 export default function SurveyCreatorWidget(props: SurveyCreatorWidgetProps) {
     const [creator, setCreator] = useState<SurveyCreator>();
     const [fileName, setFileName] = useState("");
+    const [surveyId, setSurveyId] = useState(props.id);
 
     const apiBaseUrl = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
@@ -54,14 +53,29 @@ export default function SurveyCreatorWidget(props: SurveyCreatorWidgetProps) {
                 callback: (no: number, status: boolean) => void
             ) => {
                 try {
-                    const response = await fetch(`${apiBaseUrl}/changeJson`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ id: props.id, json: newCreator.JSON }),
-                    });
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                    await response.json();
+                    const title = newCreator.JSON?.title || "Untitled";
 
+                    let response;
+                    if (!surveyId) {
+                        // Création d’un nouveau survey
+                        response = await fetch(`${apiBaseUrl}/create`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ title, json: newCreator.JSON })
+                        });
+                        const data = await response.json();
+                        setSurveyId(data.id);
+                    } else {
+                        // Mise à jour d’un survey existant
+                        response = await fetch(`${apiBaseUrl}/changeJson`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ id: surveyId, title, json: newCreator.JSON })
+                        });
+                        await response.json();
+                    }
+
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     toast.success("Questionnaire enregistré avec succès !");
                     callback(no, true);
                 } catch (err) {
@@ -73,7 +87,7 @@ export default function SurveyCreatorWidget(props: SurveyCreatorWidgetProps) {
 
             setCreator(newCreator);
         }
-    }, [creator, props.id, props.options, apiBaseUrl]);
+    }, [creator, surveyId, props.options, apiBaseUrl]);
 
     useEffect(() => {
         if (creator && props.json) {
@@ -139,12 +153,13 @@ export default function SurveyCreatorWidget(props: SurveyCreatorWidgetProps) {
     };
 
     const convertExcelToSurvey = (excelData: unknown[]) => {
-        if (!excelData || excelData.length < 2) return { title: "", showProgressBar: true, pages: [] };
+        if (!excelData || excelData.length < 2)
+            return { title: "Untitled", showProgressBar: "top", pages: [] };
 
         const headers = excelData[0] as string[];
         const pagesMap: Record<string, any> = {};
 
-        let surveyTitle = "Untitled Survey";
+        let surveyTitle = "Untitled";
         let showProgressBar: "top" | "bottom" | "none" = "top";
 
         for (let i = 1; i < excelData.length; i++) {
@@ -216,5 +231,4 @@ export default function SurveyCreatorWidget(props: SurveyCreatorWidgetProps) {
             {creator && <SurveyCreatorComponent creator={creator} />}
         </div>
     );
-
 }
